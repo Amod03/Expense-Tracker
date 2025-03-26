@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import AuthLayout from '../../components/layouts/AuthLayout.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import Input from '../../components/Inputs/Input.jsx'
 import { validateEmail } from '../../utils/helper.js'
 import ProfilePhotoSelector from '../../components/Inputs/ProfilePhotoSelector.jsx'
+import axiosInstance from '../../utils/axiosInstance.js'
+import { API_PATHS } from '../../utils/apiPaths.js'
+import { UserContext } from '../../context/userContext.jsx'
+import uploadImage from '../../utils/uploadImage.js'
 
 
 const SignUp = () => {
@@ -13,6 +17,7 @@ const SignUp = () => {
   const[password,setPassword]=useState("")
   const[error,setError]=useState(null);
   const navigate=useNavigate();
+  const {updateUser}=useContext(UserContext)
 
   //Handle signup for Form Submit
   const handleSignUp=async(e)=>{
@@ -36,6 +41,31 @@ const SignUp = () => {
       setError("")
 
       //signup api call
+      try{
+        //upload image if present
+        if(profilePic){
+          const imgUploadRes=await uploadImage(profilePic);
+          profileImageUrl=imgUploadRes.imageUrl || "";
+        }
+        const response=await axiosInstance.post(API_PATHS.AUTH.REGISTER,{
+          fullName,
+          email,
+          password,
+          profileImageUrl
+        })
+        const {token,user}=response.data;
+        if(token){
+          localStorage.setItem("token",token);
+          updateUser(user);
+          navigate("/dashboard");
+        }
+      }catch(error){
+        if(error.response && error.response.data.message){
+          setError(error.response.data.message)
+        }else{
+          setError("Something went wrong,please try again.")
+        }
+        }
   }
   return (
     <AuthLayout>
@@ -73,7 +103,7 @@ const SignUp = () => {
              </div>
             </div>
              {error && <p className='text-red-500 text-xs pb-2.5'>{error}</p>}
-                         <button type="submit" className='btn-primary'>
+                         <button type="submit" className='btn-primary' onClick={handleSignUp}>
                           Sign Up
                          </button>
                          <p className='text-[13px] text-slate-800 mt-3'>

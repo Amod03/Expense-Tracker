@@ -6,7 +6,8 @@ const connectDB=require("./config/db")
 const app=express();
 const authRoutes=require("./routes/authRoute")
 const incomeRoutes=require("./routes/incomeRoutes")
-
+const expenseRoutes=require("./routes/expenseRoutes")
+const dashboardRoutes=require("./routes/dashboardRoutes")
 //middleware to handle cors
 app.use(
     cors({
@@ -20,6 +21,8 @@ app.use(express.json());
 connectDB();
 app.use("/api/v1/auth",authRoutes)
 app.use("/api/v1/income",incomeRoutes)
+app.use("/api/v1/expense",expenseRoutes)
+app.use("/api/v1/dashboard",dashboardRoutes)
 
 //server uploads
 app.use("/uploads",express.static(path.join(__dirname,"uploads")))
