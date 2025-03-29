@@ -52,12 +52,12 @@ exports.downloadExpenseExcel=async(req,res)=>{
 
     try{
         const expense=await Expense.find({userId}).sort({date:-1});
-
+        console.log(new Date(expense[0].date),expense[0].date.format("Do MMM"))
         //prepare data for excel
         const data=expense.map((item)=>({
             Category:item.category,
             Amount:item.amount,
-            Date:item.date
+            Date:item.date.format("Do MMM")
         }));
         const wb=xlsx.utils.book_new();
         const ws=xlsx.utils.json_to_sheet(data);

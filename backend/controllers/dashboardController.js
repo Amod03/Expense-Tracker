@@ -33,7 +33,7 @@ exports.getDashboardData=async(req,res)=>{
         }).sort({date:-1})
 
         //get total expense for last 30 days
-        const expensesLast30Days=last30DaysExpenseTransactions.reduce((sum,transaction)=>sum+transaction,0);
+        const expensesLast30Days=last30DaysExpenseTransactions.reduce((sum,transaction)=>sum+transaction.amount,0);
 
         //fetch last 5 transactions(income+expenses)
         const lastTransactions=[
@@ -46,7 +46,6 @@ exports.getDashboardData=async(req,res)=>{
                 type:"expense"
             }))
         ].sort((a,b)=>b.date - a.date); //sort latest first
-
         //Final respoonse
         res.json({
             totalBalance:(totalIncome[0].total || 0) - (totalExpense[0]?.total || 0),
