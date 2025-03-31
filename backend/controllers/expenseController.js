@@ -48,16 +48,14 @@ exports.deleteExpense=async(req,res)=>{
 
 //download excel
 exports.downloadExpenseExcel=async(req,res)=>{
-    const userId=req.user.id;
-
+    const userId=req.user.id;    
     try{
         const expense=await Expense.find({userId}).sort({date:-1});
-        console.log(new Date(expense[0].date),expense[0].date.format("Do MMM"))
         //prepare data for excel
         const data=expense.map((item)=>({
             Category:item.category,
             Amount:item.amount,
-            Date:item.date.format("Do MMM")
+            Date:item.date.toLocaleDateString()
         }));
         const wb=xlsx.utils.book_new();
         const ws=xlsx.utils.json_to_sheet(data);

@@ -56,7 +56,7 @@ exports.downloadIncomeExcel=async(req,res)=>{
         const data=income.map((item)=>({
             Source:item.source,
             Amount:item.amount,
-            Date:item.date
+            Date:item.date.toLocaleDateString()
         }));
         const wb=xlsx.utils.book_new();
         const ws=xlsx.utils.json_to_sheet(data);
